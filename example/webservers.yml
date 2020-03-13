@@ -1,0 +1,6 @@
+---
+- name: stage new instance
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - provision

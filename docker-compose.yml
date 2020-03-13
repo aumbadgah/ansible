@@ -1,0 +1,9 @@
+version: "3"
+services:
+  ansible-ec2:
+    build:
+      context: .
+    container_name: ansible-ec2
+    image: ansible-ec2
+    volumes:
+      - ./bin/container-entrypoint.sh:/usr/local/bin/container-entrypoint.sh

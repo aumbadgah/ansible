@@ -1,0 +1,6 @@
+---
+instance_ami: ami-337be65c
+instance_user: centos
+instance_type: t2.micro
+instance_sg_name: my-example-sg
+instance_key_name: my-example-key

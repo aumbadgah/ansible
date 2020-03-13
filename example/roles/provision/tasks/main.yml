@@ -1,0 +1,62 @@
+---
+- name: get my public ip
+  ipify_facts: api_url=http://api.ipify.org
+  connection: local
+  register: ipify
+
+- name: set facts
+  set_fact:
+    public_ip: "{{ ipify.ansible_facts.ipify_public_ip }}"
+
+- name: create ec2 key pair
+  ec2_key:
+    name: "{{ instance_key_name }}"
+    key_material: "{{ lookup('file', 'files/my-example-key.pub') }}"
+    force: false
+
+- name: create security group
+  ec2_group:
+    name: "{{ instance_sg_name }}"
+    description: an example EC2 group
+    vpc_id: "{{ lookup('env','VPC_ID') }}"
+    region: "{{ lookup('env','AWS_REGION') }}"
+    rules:
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: "{{ public_ip }}/32"
+      - proto: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+
+- name: launch instance(s)
+  ec2:
+    exact_count: 1
+    group: "{{ instance_sg_name }}"
+    key_name: "{{ instance_key_name }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ instance_ami }}"
+    region: "{{ lookup('env','AWS_REGION') }}"
+    wait: yes
+    count_tag:
+      Name: my-example-webserver
+    instance_tags:
+      Name: my-example-webserver
+    volumes:
+      - device_name: /dev/sda1
+        volume_size: 8
+        delete_on_termination: yes
+  register: new_hosts
+
+- name: wait until started
+  wait_for: host={{ item.public_dns_name }}
+    port=22
+    delay=15
+    timeout=600
+    state=started
+  with_items: "{{ new_hosts.instances }}"

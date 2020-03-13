@@ -1,0 +1,17 @@
+version: "3"
+services:
+  ansible-ec2-example:
+    image: ansible-ec2:latest
+    container_name: ansible-ec2-example
+    stdin_open: true
+    tty: true
+    command: bash
+    volumes:
+      - ./group_vars:/app/group_vars
+      - ./roles:/app/roles
+      - ./webservers.yml:/app/webservers.yml
+    environment:
+      - AWS_REGION=eu-central-1
+      - AWS_ACCESS_KEY_ID=my_access_key_id
+      - AWS_SECRET_ACCESS_KEY=my_secret_access_key
+      - VPC_ID=vpc-abcd1234
