@@ -4,6 +4,8 @@ Ansible with dynamic AWS ec2 inventory and AWS CLI
 
 ## Usage
 
+Checkout the included [example playbook](./example)
+
 ### Define your credentials and mount your playbook
 
 `docker-compose.yml`
@@ -11,7 +13,8 @@ Ansible with dynamic AWS ec2 inventory and AWS CLI
 ```
 version: '3'
 services:
-  ansible-ec2-example:
+  ansible-ec2:
+    image: aumbadgah/ansible-ec2
     stdin_open: true
     tty: true
     command: bash

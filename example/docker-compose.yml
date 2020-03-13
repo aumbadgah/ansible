@@ -1,7 +1,7 @@
 version: "3"
 services:
   ansible-ec2-example:
-    image: ansible-ec2:latest
+    image: aumbadgah/ansible-ec2
     container_name: ansible-ec2-example
     stdin_open: true
     tty: true
